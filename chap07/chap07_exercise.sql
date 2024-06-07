@@ -319,7 +319,7 @@ ORDER BY DEPTNO, JOB;
 
 --문제1
 SELECT DEPTNO,
-              CEIL( AVG(SAL)) AS AVG_SAL,
+              TRUNC( AVG(SAL)) AS AVG_SAL,
               MAX(SAL) AS MAX_SAL,
               MIN(SAL) AS MIN_SAL,
               COUNT(*) AS CNT
@@ -341,19 +341,25 @@ GROUP BY SUBSTR(HIREDATE , 1, 4) , DEPTNO
 ORDER BY SUBSTR(HIREDATE , 1, 4) , DEPTNO ;
 
 --문제4
-SELECT NVL2(COMM, '0', 'X') AS EXIST_COMM,
+SELECT NVL2(COMM, 'O', 'X') AS EXIST_COMM,
                COUNT(*) AS CNT
    FROM EMP
-GROUP BY NVL2(COMM, '0', 'X')
-ORDER BY NVL2(COMM, '0', 'X') DESC;
+GROUP BY NVL2(COMM, 'O', 'X');
 
 --문제5
-SELECT DEPTNO,
-               SUBSTR(HIREDATE , 1, 4) AS HIRE_YEAR , 
+SELECT DECODE(GROUPING(DEPTNO), 1, '총계', DEPTNO) AS DEPTNO,
+               DECODE(GROUPING(SUBSTR(HIREDATE , 1, 4)), 1, 
+               DECODE(GROUPING(DEPTNO), 1, ' ', '소계'), 
+               SUBSTR(HIREDATE , 1, 4)) AS HIRE_YEAR,
                COUNT(*) AS CNT,
                MAX(SAL) AS MAX_SAL,
                SUM(SAL) AS SUM_SAL,
-               AVG(SAL) AS AVG_SAL
+               TRUNC(AVG(SAL)) AS AVG_SAL
+           --    GROUPING(DEPTNO) DEPTNO,
+           --    GROUPING(SUBSTR(HIREDATE , 1, 4)) HD
    FROM EMP
 GROUP BY ROLLUP(DEPTNO, SUBSTR(HIREDATE , 1, 4));
+
+
+
 
